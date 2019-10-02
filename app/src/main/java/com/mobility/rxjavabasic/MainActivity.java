@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,12 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,8 +25,10 @@ public class MainActivity extends AppCompatActivity {
     private Disposable disposable;
     private Button addButton;
     private EditText editText;
+    private TextView enteredTextView;
     private ArrayList<String> animalList;
     Observable<String> animalDataObservable;
+    private final BehaviorSubject<String> subject = BehaviorSubject.create();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +36,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         addButton = findViewById(R.id.addButton);
         editText = findViewById(R.id.editText);
+        enteredTextView=findViewById(R.id.enteredTextView);
         animalList = new ArrayList<>();
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setAnimalList(editText.getText().toString());
+//                setAnimalList(editText.getText().toString());
+//                List<String> list = getAnimalList();
+//                for (String animalName : list) {
+                    subject.onNext(editText.getText().toString());
+//                }
             }
         });
 
@@ -53,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNext(String list) {
-                Log.d("AnimalData", list);
+            public void onNext(String enteredValue) {
+                Log.d("AnimalData", enteredValue);
+                enteredTextView.setText(enteredValue);
             }
 
             @Override
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Observable<String> getListOfAnimalObservable() {
-
+/*
         final List<String> animalData = getAnimalList();
         return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
@@ -88,9 +96,10 @@ public class MainActivity extends AppCompatActivity {
                     emitter.onComplete();
                 }
             }
-        });
+        });*/
 
 
+        return subject;
     }
 
 
@@ -101,11 +110,12 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<String> getAnimalList() {
 
-        animalList.add("Cat");
+       /* animalList.add("Cat");
         animalList.add("Dog");
         animalList.add("Lion");
         animalList.add("Tiger");
-        animalList.add("Cow");
+        animalList.add("Cow");*/
+
 
         return animalList;
     }
